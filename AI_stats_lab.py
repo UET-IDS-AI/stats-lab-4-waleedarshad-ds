@@ -1,140 +1,80 @@
-"""
-AI Stats Lab
-Random Variables and Distributions
-"""
 
 import numpy as np
 import math
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-from scipy.integrate import quad
 
+# Question 1 — CDF Probabilities
+print("----- Question 1 -----")
+P_X_greater_5 = math.exp(-5)
+P_X_less_5 = 1 - math.exp(-5)
+P_between_3_7 = math.exp(-3) - math.exp(-7)
 
-# =========================================================
-# QUESTION 1 — CDF Probabilities
-# =========================================================
+# Monte Carlo Simulation
+N = 100000
+samples = np.random.exponential(scale=1, size=N)
+sim_P_X_greater_5 = np.mean(samples > 5)
+print("Analytical P(X > 5):", P_X_greater_5)
+print("Simulated  P(X > 5):", sim_P_X_greater_5)
+print("Analytical P(X < 5):", P_X_less_5)
+print("Analytical P(3 < X < 7):", P_between_3_7)
 
-def cdf_probabilities():
-    """
-    STEP 1
-    Compute analytically
+# Question 2 — PDF Validation and Plot
 
-        P(X > 5)
-        P(X < 5)
-        P(3 < X < 7)
+print("\n----- Question 2 -----")
 
-    STEP 2
-    Simulate 100000 samples from Exp(1)
+def pdf(x):
+    return 2*x*np.exp(-x**2)
+    
+x_vals = np.linspace(0,10,100000)
+# Non-negativity
+non_negative = np.all(pdf(x_vals) >= 0)
+# Numerical Integration
+integral = np.trapezoid(pdf(x_vals), x_vals)
+# Valid PDF
+is_valid_pdf = abs(integral - 1) < 1e-3
+print("Integral value:", integral)
+print("Non-negative:", non_negative)
+print("Valid PDF:", is_valid_pdf)
+# Plot
+x_plot = np.linspace(0,3,400)
+plt.plot(x_plot, pdf(x_plot))
+plt.title("PDF: f(x) = 2x e^(-x^2)")
+plt.xlabel("x")
+plt.ylabel("f(x)")
+plt.show()
 
-    STEP 3
-    Estimate P(X > 5) using simulation
+# Question 3 — Exponential Distribution
+print("\n----- Question 3 -----")
+# Analytical
+P_X_greater_5 = math.exp(-5)
+P_between_1_3 = math.exp(-1) - math.exp(-3)
+# Monte Carlo
+samples = np.random.exponential(scale=1, size=N)
 
-    RETURN
+sim_P_X_greater_5 = np.mean(samples > 5)
+sim_P_between = np.mean((samples > 1) & (samples < 3))
 
-        analytic_gt5
-        analytic_lt5
-        analytic_interval
-        simulated_gt5
-    """
+print("Analytical P(X > 5):", P_X_greater_5)
+print("Simulated  P(X > 5):", sim_P_X_greater_5)
 
-    raise NotImplementedError
+print("Analytical P(1 < X < 3):", P_between_1_3)
+print("Simulated  P(1 < X < 3):", sim_P_between)
 
+# Question 4 — Gaussian Distribution
+print("\n----- Question 4 -----")
+mu = 10
+sigma = 2
+# Analytical
+P_X_le_12 = norm.cdf(12, mu, sigma)
+P_between = norm.cdf(12, mu, sigma) - norm.cdf(8, mu, sigma)
+# Monte Carlo
+samples = np.random.normal(mu, sigma, N)
+sim_P_X_le_12 = np.mean(samples <= 12)
+sim_P_between = np.mean((samples > 8) & (samples < 12))
 
-# =========================================================
-# QUESTION 2 — PDF Validation and Plot
-# =========================================================
+print("Analytical P(X ≤ 12):", P_X_le_12)
+print("Simulated  P(X ≤ 12):", sim_P_X_le_12)
 
-def pdf_validation_plot():
-    """
-    Candidate PDF
-
-        f(x) = 2x e^{-x^2} for x >= 0
-
-    STEP 1
-    Verify non-negativity
-
-    STEP 2
-    Compute
-
-        integral_0^∞ f(x) dx
-
-    STEP 3
-    Determine if valid PDF
-
-    STEP 4
-    Plot f(x) on [0,3]
-
-    RETURN
-
-        integral_value
-        is_valid_pdf
-    """
-
-    raise NotImplementedError
-
-
-# =========================================================
-# QUESTION 3 — Exponential Distribution
-# =========================================================
-
-def exponential_probabilities():
-    """
-    X ~ Exp(1)
-
-    STEP 1
-    Compute analytically
-
-        P(X > 5)
-        P(1 < X < 3)
-
-    STEP 2
-    Simulate 100000 samples
-
-    STEP 3
-    Estimate probabilities using simulation
-
-    RETURN
-
-        analytic_gt5
-        analytic_interval
-        simulated_gt5
-        simulated_interval
-    """
-
-    raise NotImplementedError
-
-
-# =========================================================
-# QUESTION 4 — Gaussian Distribution
-# =========================================================
-
-def gaussian_probabilities():
-    """
-    X ~ N(10,2^2)
-
-    STEP 1
-    Standardize variable
-
-        Z = (X - 10)/2
-
-    STEP 2
-    Compute analytically
-
-        P(X ≤ 12)
-        P(8 < X < 12)
-
-    STEP 3
-    Simulate 100000 samples
-
-    STEP 4
-    Estimate probabilities
-
-    RETURN
-
-        analytic_le12
-        analytic_interval
-        simulated_le12
-        simulated_interval
-    """
-
-    raise NotImplementedError
+print("Analytical P(8 < X < 12):", P_between)
+print("Simulated  P(8 < X < 12):", sim_P_between)
